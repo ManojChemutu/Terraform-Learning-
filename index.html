@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+
+<html lang="en" style="color-scheme:dark;background:#05080f;">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#05080f">
+<title>Terraform — Complete Learning Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: dark;
+  --bg:      #05080f;
+  --s1:      #0f1520; /* card */
+  --s2:      #182030; /* elevated */
+  --s3:      #1e2840; /* deeper hover */
+  --b1:      #243050; /* border */
+  --b2:      #3a4a6a; /* hover border */
+  --text:    #eef1fa;
+  --muted:   #8a98b8;
+  --dim:     #5a6888;
+  --violet:  #7c5cfc;
+  --teal:    #00d4aa;
+  --amber:   #f5a623;
+  --coral:   #ff5f7e;
+  --green:   #3ddc97;
+  --blue:    #4db8ff;
+  --safe-b:  env(safe-area-inset-bottom, 0px);
+  --safe-t:  env(safe-area-inset-top, 0px);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:#05080f!important;color:#eef1fa!important;color-scheme:dark!important;scroll-behavior:smooth}
+body{
+  background:#05080f!important;color:#eef1fa!important;
+  font-family:'Nunito',sans-serif;font-size:14px;line-height:1.75;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  padding-bottom:calc(76px + env(safe-area-inset-bottom,0px));min-height:100vh;
+}
+
+/* ── HERO ── */
+.hero{
+background:#0a0f1e!important;
+background-image:linear-gradient(150deg,#0d1228 0%,#05080f 55%,#080c18 100%)!important;
+border-bottom:1px solid var(–b1);
+padding:52px 22px 38px;
+padding-top:calc(52px + env(safe-area-inset-top,0px));
+position:relative;overflow:hidden;
+}
+.hero::before{content:’’;position:absolute;top:-100px;right:-80px;width:500px;height:500px;background:radial-gradient(circle,rgba(124,92,252,.15) 0%,transparent 65%);pointer-events:none;z-index:0}
+.hero::after{content:’’;position:absolute;bottom:-50px;left:-50px;width:320px;height:320px;background:radial-gradient(circle,rgba(0,212,170,.08) 0%,transparent 65%);pointer-events:none;z-index:0}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(124,92,252,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(124,92,252,.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.hero>*:not(.hero-grid){position:relative;z-index:1}
+.hero-eyebrow{display:flex;align-items:center;gap:10px;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(–violet);margin-bottom:14px;font-family:‘DM Mono’,monospace}
+.hero-eyebrow::before{content:’’;width:20px;height:1px;background:var(–violet);opacity:.8;flex-shrink:0}
+.tf-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,92,252,.12);border:1px solid rgba(124,92,252,.3);border-radius:8px;padding:6px 12px;font-size:11px;color:#a48dfd;letter-spacing:1px;text-transform:uppercase;margin-bottom:18px;font-family:‘DM Mono’,monospace}
+.tf-icon{width:22px;height:22px;background:linear-gradient(135deg,#7c5cfc,#00d4aa);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;font-family:‘Syne’,sans-serif;flex-shrink:0}
+.hero h1{font-family:‘Syne’,sans-serif;font-size:clamp(26px,7vw,54px);font-weight:800;line-height:1.1;color:#fff!important;margin-bottom:12px}
+.hero h1 .gr{background:linear-gradient(135deg,#7c5cfc 0%,#00d4aa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:13px;color:var(–muted);max-width:560px;line-height:1.6;margin-bottom:22px}
+.hero-stats{display:flex;gap:12px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;background:rgba(124,92,252,.09);border:1px solid rgba(124,92,252,.22);border-radius:10px;padding:10px 16px}
+.stat-n{font-family:‘Syne’,sans-serif;font-size:22px;font-weight:800;color:var(–violet)!important;line-height:1.1}
+.stat-l{font-size:9.5px;color:var(–muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px;font-family:‘DM Mono’,monospace}
+
+/* ── TABS ── */
+.tabs-wrapper{position:sticky;top:0;z-index:100;background:rgba(5,8,15,.97)!important;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(–b1)}
+.tabs{display:flex;padding:0 22px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:13px 18px;font-size:11px;font-family:‘DM Mono’,monospace;letter-spacing:.7px;text-transform:uppercase;color:var(–muted)!important;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s;user-select:none;-webkit-user-select:none;flex-shrink:0;background:transparent!important}
+.tab:hover{color:var(–text)!important}
+.tab.active{color:var(–violet)!important;border-bottom-color:var(–violet)}
+
+/* ── MOBILE LABEL ── */
+.tab-indicator{display:none;align-items:center;gap:10px;padding:13px 18px 6px;font-size:11px;color:var(–muted);letter-spacing:1px;text-transform:uppercase;font-family:‘DM Mono’,monospace;background:#05080f!important}
+.tab-indicator .dot{width:7px;height:7px;border-radius:50%;background:var(–violet);box-shadow:0 0 8px rgba(124,92,252,.7);flex-shrink:0}
+@media(max-width:768px){.tab-indicator{display:flex}}
+
+/* ── CONTENT ── */
+.content{display:none;padding:22px 16px 48px;max-width:980px;background:#05080f!important}
+.content.active{display:block;animation:fadeUp .2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SECTION TITLES ── */
+.section{margin-bottom:44px}
+.sec-title{font-family:‘Syne’,sans-serif;font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(–violet);margin-bottom:20px;display:flex;align-items:center;gap:12px;font-family:‘DM Mono’,monospace}
+.sec-title::after{content:’’;flex:1;height:1px;background:linear-gradient(90deg,var(–b2),transparent);min-width:20px}
+.sec-title.teal{color:var(–teal)}
+.sec-title.teal::after{background:linear-gradient(90deg,rgba(0,212,170,.4),transparent)}
+.sec-title.amber{color:var(–amber)}
+.sec-title.coral{color:var(–coral)}
+.sec-title.green{color:var(–green)}
+
+/* ── PROSE ── */
+.prose{font-size:13.5px;color:var(–muted);line-height:1.8;margin-bottom:18px}
+.prose strong{color:var(–text)!important;font-weight:700}
+.prose em{color:var(–teal);font-style:normal;font-weight:600}
+.callout{background:var(–s1)!important;border:1px solid var(–b1);border-left:3px solid var(–violet);border-radius:0 10px 10px 0;padding:14px 16px;margin:16px 0;font-size:13px;color:var(–muted)}
+.callout strong{color:var(–violet)!important}
+.callout.teal{border-left-color:var(–teal)}.callout.teal strong{color:var(–teal)!important}
+.callout.amber{border-left-color:var(–amber)}.callout.amber strong{color:var(–amber)!important}
+.callout.green{border-left-color:var(–green)}.callout.green strong{color:var(–green)!important}
+.callout.coral{border-left-color:var(–coral)}.callout.coral strong{color:var(–coral)!important}
+
+/* ── CODE ── */
+.code-block{background:#0a1020!important;border:1px solid var(–b1);border-radius:12px;overflow:hidden;margin:16px 0}
+.code-hdr{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(–b1);background:#0e1828!important}
+.code-name{font-size:10px;color:var(–muted);letter-spacing:1.5px;text-transform:uppercase;font-family:‘DM Mono’,monospace}
+.code-tag{font-size:9px;padding:2px 8px;border-radius:4px;background:rgba(124,92,252,.15)!important;color:#a48dfd!important;letter-spacing:1px;text-transform:uppercase;font-family:‘DM Mono’,monospace}
+.code-body{padding:16px;overflow-x:auto;font-family:‘DM Mono’,monospace;font-size:12px;line-height:1.75;color:#c8d3ee!important;white-space:pre;-webkit-overflow-scrolling:touch}
+.kw{color:#a48dfd!important}.str{color:#3ddc97!important}.num{color:#f5a623!important}.cmt{color:#4a5c80!important}.key{color:#00d4aa!important}.fn{color:#ff8fa3!important}.op{color:#7c5cfc!important}
+
+/* ── SVG INFOGRAPHIC CONTAINERS ── */
+.infographic{background:var(–s1)!important;border:1px solid var(–b1);border-radius:16px;padding:20px;margin:20px 0;overflow:hidden}
+.infographic svg{width:100%;height:auto;display:block}
+.infographic .caption{font-size:11px;color:var(–dim);text-align:center;margin-top:12px;letter-spacing:.5px;font-family:‘DM Mono’,monospace}
+
+/* ── CARDS ── */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:14px}
+.card{background:var(–s1)!important;border:1px solid var(–b1);border-radius:14px;padding:20px;transition:border-color .2s,transform .2s,box-shadow .2s;position:relative;overflow:hidden}
+.card.cv{border-left:3px solid var(–violet)!important}
+.card.ct{border-left:3px solid var(–teal)!important}
+.card.ca{border-left:3px solid var(–amber)!important}
+.card.cc{border-left:3px solid var(–coral)!important}
+.card.cg{border-left:3px solid var(–green)!important}
+.card.cb{border-left:3px solid var(–blue)!important}
+.card:hover{border-color:var(–b2);transform:translateY(-2px);box-shadow:0 10px 32px rgba(0,0,0,.5)}
+.card-ic{font-size:26px;margin-bottom:10px}
+.card h3{font-family:‘Syne’,sans-serif;font-size:14px;font-weight:700;color:var(–text)!important;margin-bottom:7px;line-height:1.3}
+.card p{font-size:12.5px;color:var(–muted)!important;line-height:1.65}
+.card-tag{display:inline-block;font-size:9.5px;padding:2px 8px;border-radius:4px;margin-bottom:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;font-family:‘DM Mono’,monospace}
+.ct-v{background:rgba(124,92,252,.15)!important;color:#a48dfd!important;border:1px solid rgba(124,92,252,.25)}
+.ct-t{background:rgba(0,212,170,.15)!important;color:#00d4aa!important;border:1px solid rgba(0,212,170,.25)}
+.ct-a{background:rgba(245,166,35,.15)!important;color:#f5c84a!important;border:1px solid rgba(245,166,35,.25)}
+.ct-g{background:rgba(61,220,151,.15)!important;color:#3ddc97!important;border:1px solid rgba(61,220,151,.25)}
+.ct-c{background:rgba(255,95,126,.15)!important;color:#ff8fa3!important;border:1px solid rgba(255,95,126,.28)}
+
+/* ── PHASE TIMELINE ── */
+.phase-list{display:flex;flex-direction:column;gap:0}
+.phase{display:flex;gap:0;position:relative}
+.phase-spine{display:flex;flex-direction:column;align-items:center;width:38px;flex-shrink:0;padding-top:4px}
+.pdot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:‘Syne’,sans-serif;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;z-index:1}
+.pline{width:2px;flex:1;margin:4px 0;opacity:.25;min-height:24px}
+.pbody{flex:1;background:var(–s1)!important;border:1px solid var(–b1);border-radius:14px;padding:20px;margin-bottom:16px;margin-left:10px;transition:border-color .2s,box-shadow .2s}
+.pbody:hover{border-color:var(–b2);box-shadow:0 6px 28px rgba(0,0,0,.45)}
+.phase-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:8px}
+.phase-num{font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-weight:600;font-family:‘DM Mono’,monospace}
+.phase-ttl{font-family:‘Syne’,sans-serif;font-size:15px;font-weight:700;color:var(–text)!important;line-height:1.25}
+.pdur{font-size:10px;color:var(–muted);background:rgba(138,152,184,.1);border:1px solid rgba(138,152,184,.2);border-radius:100px;padding:3px 10px;white-space:nowrap;flex-shrink:0;font-family:‘DM Mono’,monospace}
+.topics{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}
+.topic{font-size:11px;padding:4px 10px;border-radius:6px;background:rgba(124,92,252,.10)!important;border:1px solid rgba(124,92,252,.2);color:#a48dfd!important;font-family:‘DM Mono’,monospace}
+.topic.done{background:rgba(61,220,151,.10)!important;border-color:rgba(61,220,151,.2);color:#3ddc97!important}
+.topic.now{background:rgba(0,212,170,.10)!important;border-color:rgba(0,212,170,.25);color:#00d4aa!important}
+.phase-goal{font-size:12.5px;color:var(–green)!important;background:rgba(61,220,151,.07)!important;border:1px solid rgba(61,220,151,.18);border-radius:8px;padding:9px 12px;line-height:1.5;margin-top:10px}
+.goal-lbl{font-weight:700;margin-right:5px}
+/* phase colors */
+.ph1 .pdot{background:linear-gradient(135deg,#7c5cfc,#a48dfd)}.ph1 .pline{background:#7c5cfc}.ph1 .phase-num{color:#7c5cfc}
+.ph2 .pdot{background:linear-gradient(135deg,#00d4aa,#3ddc97)}.ph2 .pline{background:#00d4aa}.ph2 .phase-num{color:#00d4aa}
+.ph3 .pdot{background:linear-gradient(135deg,#f5a623,#ffd06e)}.ph3 .pline{background:#f5a623}.ph3 .phase-num{color:#f5a623}
+.ph4 .pdot{background:linear-gradient(135deg,#ff5f7e,#ff8fa3)}.ph4 .pline{background:#ff5f7e}.ph4 .phase-num{color:#ff5f7e}
+.ph5 .pdot{background:linear-gradient(135deg,#4db8ff,#7c5cfc)}.ph5 .phase-num{color:#4db8ff}
+
+/* ── STEP-LIST ── */
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;gap:14px;align-items:flex-start;background:var(–s1)!important;border:1px solid var(–b1);border-radius:12px;padding:16px;transition:border-color .2s}
+.step:hover{border-color:var(–b2)}
+.step-num{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:rgba(124,92,252,.14)!important;border:1px solid rgba(124,92,252,.35);color:var(–violet)!important;font-family:‘Syne’,sans-serif;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.step h4{font-size:13.5px;color:var(–text)!important;margin-bottom:4px;font-family:‘Syne’,sans-serif;font-weight:700}
+.step p{font-size:12.5px;color:var(–muted)!important;line-height:1.6}
+
+/* ── CMD TABLE ── */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px;border:1px solid var(–b1)}
+.tbl{width:100%;border-collapse:collapse;min-width:420px}
+.tbl thead tr{background:var(–s2)!important}
+.tbl th{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(–muted)!important;text-align:left;padding:11px 14px;border-bottom:1px solid var(–b2);white-space:nowrap;font-family:‘DM Mono’,monospace}
+.tbl tbody tr{background:var(–s1)!important;transition:background .15s}
+.tbl tbody tr:nth-child(even){background:rgba(24,32,48,.7)!important}
+.tbl tbody tr:hover{background:var(–s2)!important}
+.tbl td{padding:11px 14px;font-size:12.5px;color:var(–text)!important;border-bottom:1px solid rgba(36,48,80,.6);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.mono{font-family:‘DM Mono’,monospace;color:#a48dfd!important;font-size:12px}
+.tdesc{color:var(–muted)!important;font-size:12px}
+.flag{font-size:9.5px;padding:2px 7px;border-radius:4px;white-space:nowrap;font-family:‘DM Mono’,monospace}
+.fe{background:rgba(61,220,151,.15)!important;color:#3ddc97!important;border:1px solid rgba(61,220,151,.25)}
+.fc{background:rgba(124,92,252,.15)!important;color:#a48dfd!important;border:1px solid rgba(124,92,252,.25)}
+.fa{background:rgba(245,166,35,.15)!important;color:#f5c84a!important;border:1px solid rgba(245,166,35,.25)}
+
+/* ── BP (Best Practice) ── */
+.bp-list{display:flex;flex-direction:column;gap:12px}
+.bp{background:var(–s1)!important;border:1px solid var(–b1);border-radius:12px;padding:17px 17px 17px 21px;position:relative;transition:box-shadow .2s}
+.bp::before{content:’’;position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:12px 0 0 12px}
+.bp-do::before{background:var(–green)}.bp-dn::before{background:var(–coral)}.bp-tip::before{background:var(–violet)}
+.bp:hover{box-shadow:0 6px 28px rgba(0,0,0,.45)}
+.bp-badge{display:inline-block;font-size:9px;padding:2px 8px;border-radius:4px;margin-bottom:8px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;font-family:‘DM Mono’,monospace}
+.bdo{background:rgba(61,220,151,.18)!important;color:#3ddc97!important;border:1px solid rgba(61,220,151,.3)}
+.bdn{background:rgba(255,95,126,.18)!important;color:#ff8fa3!important;border:1px solid rgba(255,95,126,.3)}
+.btp{background:rgba(124,92,252,.18)!important;color:#a48dfd!important;border:1px solid rgba(124,92,252,.3)}
+.bp h4{font-size:13.5px;color:var(–text)!important;margin-bottom:5px;font-family:‘Syne’,sans-serif;font-weight:700}
+.bp p{font-size:12.5px;color:var(–muted)!important;line-height:1.6}
+
+/* ── PROJECTS ── */
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(275px,1fr));gap:14px}
+.proj{background:var(–s1)!important;border:1px solid var(–b1);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s,box-shadow .2s}
+.proj::before{content:’’;position:absolute;top:0;left:0;right:0;height:3px}
+.pb::before{background:linear-gradient(90deg,#3ddc97,#00d4aa)}
+.pi::before{background:linear-gradient(90deg,#7c5cfc,#00d4aa)}
+.pa::before{background:linear-gradient(90deg,#f5a623,#ff5f7e)}
+.proj:hover{border-color:var(–b2);transform:translateY(-2px);box-shadow:0 10px 32px rgba(0,0,0,.5)}
+.plv{font-size:9px;padding:3px 8px;border-radius:4px;display:inline-block;margin-bottom:10px;letter-spacing:1px;text-transform:uppercase;font-weight:700;font-family:‘DM Mono’,monospace}
+.lb{background:rgba(61,220,151,.15)!important;color:#3ddc97!important;border:1px solid rgba(61,220,151,.25)}
+.li{background:rgba(124,92,252,.15)!important;color:#a48dfd!important;border:1px solid rgba(124,92,252,.25)}
+.la{background:rgba(245,166,35,.15)!important;color:#f5c84a!important;border:1px solid rgba(245,166,35,.25)}
+.proj h3{font-family:‘Syne’,sans-serif;font-size:14px;font-weight:700;color:var(–text)!important;margin-bottom:7px}
+.proj p{font-size:12.5px;color:var(–muted)!important;line-height:1.6;margin-bottom:12px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:10px;padding:3px 8px;border-radius:5px;background:rgba(0,212,170,.09)!important;border:1px solid rgba(0,212,170,.2);color:#00d4aa!important;font-family:‘DM Mono’,monospace}
+
+/* ── RESOURCES ── */
+.res-list{display:flex;flex-direction:column;gap:10px}
+.res{display:flex;gap:14px;align-items:flex-start;background:var(–s1)!important;border:1px solid var(–b1);border-radius:12px;padding:16px;transition:border-color .2s,box-shadow .2s}
+.res:hover{border-color:var(–b2);box-shadow:0 6px 24px rgba(0,0,0,.45)}
+.res-ic{flex-shrink:0;width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(124,92,252,.12)!important;border:1px solid rgba(124,92,252,.22)}
+.res h4{font-size:13.5px;color:var(–text)!important;margin-bottom:4px;font-family:‘Syne’,sans-serif;font-weight:700}
+.res p{font-size:12px;color:var(–muted)!important;line-height:1.55}
+.res-meta{display:flex;gap:7px;margin-top:6px;flex-wrap:wrap}
+.rtag{font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(124,92,252,.12)!important;border:1px solid rgba(124,92,252,.2);color:#a48dfd!important;font-family:‘DM Mono’,monospace}
+.rtag.free{background:rgba(61,220,151,.10)!important;border-color:rgba(61,220,151,.2);color:#3ddc97!important}
+.rtag.paid{background:rgba(245,166,35,.10)!important;border-color:rgba(245,166,35,.2);color:#f5c84a!important}
+
+/* ── CERT ── */
+.cert{background:var(–s1)!important;border:1px solid rgba(124,92,252,.4);border-radius:14px;padding:22px;margin-bottom:14px;position:relative;overflow:hidden;background:linear-gradient(155deg,rgba(124,92,252,.07) 0%,var(–s1) 60%)!important}
+.cert::after{content:‘⭐ RECOMMENDED’;position:absolute;top:14px;right:14px;font-size:9px;letter-spacing:2px;color:var(–violet)!important;background:rgba(124,92,252,.13)!important;border:1px solid rgba(124,92,252,.35);border-radius:4px;padding:3px 8px;font-family:‘DM Mono’,monospace}
+.cert h3{font-family:‘Syne’,sans-serif;font-size:16px;font-weight:700;color:var(–text)!important;margin-bottom:6px;padding-right:130px}
+.cert p{font-size:12.5px;color:var(–muted)!important;margin-bottom:14px;line-height:1.6}
+.cert-meta{display:flex;gap:8px;flex-wrap:wrap}
+.cbadge{font-size:10.5px;padding:4px 12px;border-radius:100px;border:1px solid;white-space:nowrap}
+.cbv{border-color:var(–violet);color:#a48dfd!important;background:rgba(124,92,252,.09)!important}
+.cbg{border-color:var(–green);color:var(–green)!important;background:rgba(61,220,151,.09)!important}
+.cba{border-color:var(–amber);color:#f5c84a!important;background:rgba(245,166,35,.09)!important}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(5,8,15,.98)!important;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(–b1);padding:8px 2px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:200;flex-direction:row;justify-content:space-around;align-items:flex-end}
+.bni{display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 2px;cursor:pointer;flex:1;user-select:none;-webkit-user-select:none;border-radius:10px;transition:background .15s;min-width:0}
+.bni:active{background:rgba(124,92,252,.1)}
+.bni-ic{font-size:20px;line-height:1}
+.bni-lb{font-size:8px;font-family:‘DM Mono’,monospace;color:var(–muted)!important;letter-spacing:.2px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.bni.active .bni-lb{color:var(–violet)!important}
+.bni.active .bni-ic{filter:drop-shadow(0 0 6px rgba(124,92,252,.7))}
+@media(max-width:768px){
+.tabs-wrapper{display:none}.bottom-nav{display:flex}
+.content{padding:16px 14px 48px}.section{margin-bottom:36px}
+.sec-title{font-size:9.5px;letter-spacing:3px}
+.cards{grid-template-columns:1fr;gap:12px}.proj-grid{grid-template-columns:1fr;gap:12px}
+.card{padding:16px}.infographic{padding:14px}
+.phase-spine{width:30px}.pdot{width:24px;height:24px;font-size:10px}
+.pbody{padding:15px;margin-left:8px}
+.tbl th{font-size:9px;padding:9px 10px}.tbl td{padding:9px 10px;font-size:12px}
+.step{padding:14px;gap:11px}.bp{padding:14px 14px 14px 18px}
+.hero-stats{gap:9px}.stat{padding:8px 12px}.stat-n{font-size:18px}
+.cert h3{padding-right:0}.cert::after{display:none}
+}
+@media(min-width:769px){
+.content{padding:36px 48px 56px}
+.hero{padding:56px 48px 44px;padding-top:calc(56px + env(safe-area-inset-top,0px))}
+.tabs{padding:0 48px}.tab{padding:14px 22px}
+}
+@media(max-width:375px){.hero h1{font-size:22px}.bni-lb{font-size:7.5px}}
+</style>
+
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-eyebrow">Complete Learning Guide</div>
+  <div class="tf-badge"><div class="tf-icon">TF</div>HashiCorp Terraform</div>
+  <h1>Learn <span class="gr">Terraform</span><br>End-to-End</h1>
+  <p class="hero-sub">From "what is IaC?" to production CI/CD pipelines — with visual diagrams, real code, and hands-on projects. Built for DevOps engineers in BFSI.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-n">12</div><div class="stat-l">Weeks</div></div>
+    <div class="stat"><div class="stat-n">5</div><div class="stat-l">Phases</div></div>
+    <div class="stat"><div class="stat-n">50+</div><div class="stat-l">Concepts</div></div>
+    <div class="stat"><div class="stat-n">8</div><div class="stat-l">Projects</div></div>
+  </div>
+</div>
+
+<!-- DESKTOP TABS -->
+
+<div class="tabs-wrapper"><div class="tabs">
+  <div class="tab active" onclick="show('roadmap',this,'🗺 Roadmap')">🗺 Roadmap</div>
+  <div class="tab" onclick="show('concepts',this,'🧠 Concepts')">🧠 Concepts</div>
+  <div class="tab" onclick="show('workflow',this,'⚙️ Workflow')">⚙️ Workflow</div>
+  <div class="tab" onclick="show('syntax',this,'📝 Syntax')">📝 Syntax</div>
+  <div class="tab" onclick="show('state',this,'💾 State')">💾 State</div>
+  <div class="tab" onclick="show('modules',this,'🧩 Modules')">🧩 Modules</div>
+  <div class="tab" onclick="show('cicd',this,'🚀 CI/CD')">🚀 CI/CD</div>
+  <div class="tab" onclick="show('projects',this,'🛠 Projects')">🛠 Projects</div>
+</div></div>
+<div class="tab-indicator"><div class="dot"></div><span id="lbl">🗺 Roadmap</span></div>
+
+<!-- ═══════════════════════════════════
+     TAB 1: ROADMAP
+═══════════════════════════════════ -->
+
+<div id="roadmap" class="content active">
+<div class="section">
+  <div class="sec-title">Your 12-week path to Terraform mastery</div>
+
+  <!-- OVERVIEW INFOGRAPHIC -->
+
+  <div class="infographic">
+    <svg viewBox="0 0 760 120" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="lg1" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#7c5cfc"/>
+          <stop offset="25%" stop-color="#00d4aa"/>
+          <stop offset="50%" stop-color="#f5a623"/>
+          <stop offset="75%" stop-color="#ff5f7e"/>
+          <stop offset="100%" stop-color="#4db8ff"/>
+        </linearGradient>
+      </defs>
+      <!-- progress bar -->
+      <rect x="60" y="54" width="640" height="6" rx="3" fill="#243050"/>
+      <rect x="60" y="54" width="640" height="6" rx="3" fill="url(#lg1)" opacity=".8"/>
+      <!-- phase circles -->
+      <circle cx="60"  cy="57" r="18" fill="#7c5cfc" opacity=".9"/>
+      <circle cx="220" cy="57" r="18" fill="#00d4aa" opacity=".9"/>
+      <circle cx="380" cy="57" r="18" fill="#f5a623" opacity=".9"/>
+      <circle cx="540" cy="57" r="18" fill="#ff5f7e" opacity=".9"/>
+      <circle cx="700" cy="57" r="18" fill="#4db8ff" opacity=".9"/>
+      <!-- numbers -->
+      <text x="60"  y="62" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="white">1</text>
+      <text x="220" y="62" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="white">2</text>
+      <text x="380" y="62" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="white">3</text>
+      <text x="540" y="62" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="white">4</text>
+      <text x="700" y="62" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="white">5</text>
+      <!-- labels above -->
+      <text x="60"  y="28" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#a48dfd">Foundations</text>
+      <text x="220" y="28" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#00d4aa">Variables</text>
+      <text x="380" y="28" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#f5a623">Modules</text>
+      <text x="540" y="28" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#ff8fa3">State Mgmt</text>
+      <text x="700" y="28" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#7cc8ff">CI/CD</text>
+      <!-- weeks below -->
+      <text x="60"  y="90" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#5a6888">Wk 1-2</text>
+      <text x="220" y="90" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#5a6888">Wk 3-4</text>
+      <text x="380" y="90" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#5a6888">Wk 5-6</text>
+      <text x="540" y="90" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#5a6888">Wk 7-9</text>
+      <text x="700" y="90" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#5a6888">Wk 10-12</text>
+    </svg>
+    <div class="caption">5 phases · 12 weeks · beginner → production-ready</div>
+  </div>
+
+  <div class="phase-list">
+    <div class="phase ph1">
+      <div class="phase-spine"><div class="pdot">1</div><div class="pline"></div></div>
+      <div class="pbody">
+        <div class="phase-hdr"><div><div class="phase-num">Phase 1</div><div class="phase-ttl">Foundations &amp; First Infrastructure</div></div><div class="pdur">Wk 1–2</div></div>
+        <p class="prose">Understand what IaC means, install Terraform, write your first <em>.tf</em> file, and deploy real cloud resources. You will run the full <strong>init → plan → apply → destroy</strong> cycle from scratch.</p>
+        <div class="topics"><span class="topic done">What is IaC?</span><span class="topic done">Install + Setup</span><span class="topic now">Providers &amp; init</span><span class="topic">Plan/Apply/Destroy</span><span class="topic">HCL Syntax</span><span class="topic">First EC2</span></div>
+        <div class="phase-goal"><span class="goal-lbl">✓ Milestone:</span> Deploy EC2 + S3 bucket on AWS. Understand what the state file is and why it exists.</div>
+      </div>
+    </div>
+    <div class="phase ph2">
+      <div class="phase-spine"><div class="pdot">2</div><div class="pline"></div></div>
+      <div class="pbody">
+        <div class="phase-hdr"><div><div class="phase-num">Phase 2</div><div class="phase-ttl">Variables, Outputs &amp; Data Sources</div></div><div class="pdur">Wk 3–4</div></div>
+        <p class="prose">Make your configs <strong>dynamic and reusable</strong>. Parameterise inputs with type validation, expose values as outputs, and query existing cloud resources using data sources.</p>
+        <div class="topics"><span class="topic">Input variables</span><span class="topic">Type system</span><span class="topic">Validation blocks</span><span class="topic">Output values</span><span class="topic">Data sources</span><span class="topic">Local values</span><span class="topic">tfvars files</span></div>
+        <div class="phase-goal"><span class="goal-lbl">✓ Milestone:</span> Parameterise Phase 1 config. Pass env-specific values via terraform.tfvars. Export VPC ID as output to another config.</div>
+      </div>
+    </div>
+    <div class="phase ph3">
+      <div class="phase-spine"><div class="pdot">3</div><div class="pline"></div></div>
+      <div class="pbody">
+        <div class="phase-hdr"><div><div class="phase-num">Phase 3</div><div class="phase-ttl">Modules &amp; Code Reuse</div></div><div class="pdur">Wk 5–6</div></div>
+        <p class="prose">Build <strong>DRY, composable infrastructure</strong>. Write your own local modules, use the public Terraform Registry, understand versioning and how to pass data between modules.</p>
+        <div class="topics"><span class="topic">Module structure</span><span class="topic">Local modules</span><span class="topic">Registry modules</span><span class="topic">count</span><span class="topic">for_each</span><span class="topic">Module versioning</span></div>
+        <div class="phase-goal"><span class="goal-lbl">✓ Milestone:</span> Build a reusable VPC module. Call it 3 times for dev/staging/prod with different inputs. No copy-pasting.</div>
+      </div>
+    </div>
+    <div class="phase ph4">
+      <div class="phase-spine"><div class="pdot">4</div><div class="pline"></div></div>
+      <div class="pbody">
+        <div class="phase-hdr"><div><div class="phase-num">Phase 4</div><div class="phase-ttl">State Management &amp; Remote Backends</div></div><div class="pdur">Wk 7–9</div></div>
+        <p class="prose">The <strong>most critical phase for team workflows</strong>. Deep-dive into how Terraform tracks reality, configure S3 remote backends, implement locking, import existing resources, and handle state surgery.</p>
+        <div class="topics"><span class="topic">State anatomy</span><span class="topic">Remote backend S3</span><span class="topic">DynamoDB locking</span><span class="topic">terraform import</span><span class="topic">State surgery</span><span class="topic">Workspaces</span></div>
+        <div class="phase-goal"><span class="goal-lbl">✓ Milestone:</span> Migrate local state to S3+DynamoDB. Import a manually created resource. Demonstrate lock prevents concurrent apply.</div>
+      </div>
+    </div>
+    <div class="phase ph5">
+      <div class="phase-spine"><div class="pdot">5</div></div>
+      <div class="pbody">
+        <div class="phase-hdr"><div><div class="phase-num">Phase 5</div><div class="phase-ttl">CI/CD Integration &amp; Production Patterns</div></div><div class="pdur">Wk 10–12</div></div>
+        <p class="prose">Wire Terraform into your <strong>DevOps pipeline</strong>. GitHub Actions automation, OIDC auth (zero long-lived keys), drift detection, secrets management, and enterprise-grade guardrails.</p>
+        <div class="topics"><span class="topic">GitHub Actions</span><span class="topic">OIDC auth</span><span class="topic">Plan gating</span><span class="topic">Drift detection</span><span class="topic">Vault / SSM</span><span class="topic">Policy as Code</span></div>
+        <div class="phase-goal"><span class="goal-lbl">✓ Milestone:</span> Full CI/CD — PR triggers plan posted as PR comment, merge triggers apply, OIDC auth to AWS. Daily drift detection Lambda.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════
+     TAB 2: CONCEPTS
+═══════════════════════════════════ -->
+
+<div id="concepts" class="content">
+<div class="section">
+  <div class="sec-title">What is Infrastructure as Code?</div>
+  <p class="prose">Infrastructure as Code means <strong>describing your servers, networks, and databases in text files</strong> — just like application code. Instead of clicking around the AWS console, you write a `.tf` file and Terraform creates the infrastructure for you.</p>
+
+  <!-- IaC vs Manual comparison infographic -->
+
+  <div class="infographic">
+    <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Left: Manual -->
+      <rect x="10" y="10" width="320" height="180" rx="12" fill="#0f1520" stroke="#ff5f7e" stroke-width="1.5" stroke-opacity=".5"/>
+      <text x="170" y="36" text-anchor="middle" font-family="Syne,sans-serif" font-size="12" font-weight="700" fill="#ff8fa3">❌ Manual (Console Clicking)</text>
+      <text x="30" y="62" font-family="DM Mono,monospace" font-size="10" fill="#8a98b8">1. Log in to AWS console</text>
+      <text x="30" y="80" font-family="DM Mono,monospace" font-size="10" fill="#8a98b8">2. Click EC2 → Launch Instance</text>
+      <text x="30" y="98" font-family="DM Mono,monospace" font-size="10" fill="#8a98b8">3. Choose AMI (hope you remember)</text>
+      <text x="30" y="116" font-family="DM Mono,monospace" font-size="10" fill="#8a98b8">4. Configure manually</text>
+      <text x="30" y="134" font-family="DM Mono,monospace" font-size="10" fill="#8a98b8">5. Repeat for staging, prod...</text>
+      <text x="30" y="160" font-family="DM Mono,monospace" font-size="9" fill="#ff8fa3">→ No history · Not repeatable · Snowflakes</text>
+      <!-- Right: IaC -->
+      <rect x="370" y="10" width="320" height="180" rx="12" fill="#0f1520" stroke="#3ddc97" stroke-width="1.5" stroke-opacity=".5"/>
+      <text x="530" y="36" text-anchor="middle" font-family="Syne,sans-serif" font-size="12" font-weight="700" fill="#3ddc97">✓ Terraform (IaC)</text>
+      <text x="390" y="62" font-family="DM Mono,monospace" font-size="10" fill="#a48dfd">resource "aws_instance" "web" {</text>
+      <text x="390" y="80" font-family="DM Mono,monospace" font-size="10" fill="#8a98b8">  ami           = data.aws_ami...</text>
+      <text x="390" y="98" font-family="DM Mono,monospace" font-size="10" fill="#8a98b8">  instance_type = "t3.micro"</text>
+      <text x="390" y="116" font-family="DM Mono,monospace" font-size="10" fill="#a48dfd">}</text>
+      <text x="390" y="134" font-family="DM Mono,monospace" font-size="10" fill="#8a98b8">$ terraform apply  # done ✓</text>
+      <text x="390" y="160" font-family="DM Mono,monospace" font-size="9" fill="#3ddc97">→ Git history · Repeatable · Reviewable</text>
+    </svg>
+    <div class="caption">Manual vs IaC — the fundamental difference</div>
+  </div>
+
+  <div class="sec-title teal" style="margin-top:32px">The 6 Core Building Blocks</div>
+
+  <!-- Architecture diagram -->
+
+  <div class="infographic">
+    <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#3a4a6a"/>
+        </marker>
+        <marker id="arr2" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#7c5cfc"/>
+        </marker>
+      </defs>
+      <!-- Your .tf files box -->
+      <rect x="10" y="100" width="150" height="80" rx="10" fill="#13182a" stroke="#7c5cfc" stroke-width="1.5"/>
+      <text x="85" y="128" text-anchor="middle" font-family="Syne,sans-serif" font-size="11" font-weight="700" fill="#a48dfd">Your .tf Files</text>
+      <text x="85" y="148" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#8a98b8">Resources</text>
+      <text x="85" y="163" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#8a98b8">Variables · Outputs</text>
+      <!-- arrow to Terraform Core -->
+      <line x1="162" y1="140" x2="218" y2="140" stroke="#3a4a6a" stroke-width="1.5" marker-end="url(#arr)"/>
+      <!-- Terraform Core -->
+      <rect x="220" y="80" width="160" height="120" rx="10" fill="#13182a" stroke="#00d4aa" stroke-width="2"/>
+      <text x="300" y="108" text-anchor="middle" font-family="Syne,sans-serif" font-size="12" font-weight="800" fill="#00d4aa">Terraform Core</text>
+      <text x="300" y="126" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#8a98b8">Reads config</text>
+      <text x="300" y="142" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#8a98b8">Reads state</text>
+      <text x="300" y="158" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#8a98b8">Calculates diff</text>
+      <text x="300" y="174" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#8a98b8">Calls providers</text>
+      <!-- arrow to Providers -->
+      <line x1="382" y1="140" x2="438" y2="140" stroke="#3a4a6a" stroke-width="1.5" marker-end="url(#arr)"/>
+      <!-- Providers box -->
+      <rect x="440" y="80" width="150" height="120" rx="10" fill="#13182a" stroke="#f5a623" stroke-width="1.5"/>
+      <text x="515" y="108" text-anchor="middle" font-family="Syne,sans-serif" font-size="11" font-weight="700" fill="#f5a623">Providers</text>
+      <text x="515" y="128" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#8a98b8">AWS · Azure · GCP</text>
+      <text x="515" y="146" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#8a98b8">Kubernetes · GitHub</text>
+      <text x="515" y="164" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#8a98b8">Datadog · Vault...</text>
+      <!-- arrow to Cloud APIs -->
+      <line x1="592" y1="140" x2="638" y2="140" stroke="#3a4a6a" stroke-width="1.5" marker-end="url(#arr)"/>
+      <!-- Cloud APIs -->
+      <rect x="640" y="110" width="52" height="60" rx="8" fill="#13182a" stroke="#3ddc97" stroke-width="1.5"/>
+      <text x="666" y="136" text-anchor="middle" font-family="DM Mono,monospace" font-size="8" fill="#3ddc97">Cloud</text>
+      <text x="666" y="150" text-anchor="middle" font-family="DM Mono,monospace" font-size="8" fill="#3ddc97">APIs</text>
+      <!-- State File below Core -->
+      <rect x="235" y="225" width="130" height="45" rx="8" fill="#13182a" stroke="#ff5f7e" stroke-width="1.5"/>
+      <text x="300" y="247" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#ff8fa3">State File</text>
+      <text x="300" y="262" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">terraform.tfstate</text>
+      <!-- bidirectional arrow between Core and State -->
+      <line x1="300" y1="202" x2="300" y2="223" stroke="#ff5f7e" stroke-width="1.5" stroke-opacity=".6" marker-end="url(#arr)"/>
+      <line x1="288" y1="223" x2="288" y2="202" stroke="#ff5f7e" stroke-width="1.5" stroke-opacity=".6" marker-end="url(#arr)"/>
+      <!-- labels -->
+      <text x="350" y="20" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#5a6888">How Terraform works under the hood</text>
+    </svg>
+    <div class="caption">Terraform reads your config + state → calls provider APIs → creates/modifies real infrastructure</div>
+  </div>
+
+  <div class="cards">
+    <div class="card cv"><div class="card-ic">📋</div><h3>Provider</h3><p>A plugin that translates Terraform resources into real API calls. The AWS provider turns <code style="color:#a48dfd">aws_instance</code> into EC2 API calls. Over 3,000 providers exist on the registry.</p></div>
+    <div class="card ct"><div class="card-ic">🏗️</div><h3>Resource</h3><p>The fundamental building block. A <code style="color:#a48dfd">resource</code> block declares one infrastructure object — EC2, S3 bucket, VPC. Terraform creates, updates, or destroys it to match your config.</p></div>
+    <div class="card ca"><div class="card-ic">📦</div><h3>State File</h3><p>A JSON file tracking every resource Terraform manages. It maps your config to real-world IDs. Without state, Terraform can't know what already exists or what needs changing.</p></div>
+    <div class="card cc"><div class="card-ic">🔍</div><h3>Data Source</h3><p>Read-only queries to fetch existing infrastructure. Use <code style="color:#a48dfd">data</code> blocks to look up an AMI ID, an existing VPC, or a secret — any external value your resources need.</p></div>
+    <div class="card cg"><div class="card-ic">🧩</div><h3>Module</h3><p>A directory of .tf files with inputs and outputs — the reusable component pattern of Terraform. Write once, call many times with different parameters.</p></div>
+    <div class="card cv"><div class="card-ic">🌍</div><h3>Workspace</h3><p>Isolated state environments within the same config. Use workspaces to maintain separate state for dev/staging/prod without duplicating your code.</p></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════
+     TAB 3: WORKFLOW
+═══════════════════════════════════ -->
+
+<div id="workflow" class="content">
+<div class="section">
+  <div class="sec-title">The Core Terraform Workflow</div>
+  <p class="prose">Every Terraform operation follows the same 4-command cycle. Mastering <em>when and why</em> to use each command is the foundation of everything else.</p>
+
+  <!-- Workflow Flowchart SVG -->
+
+  <div class="infographic">
+    <svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="a1" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#5a6888"/></marker>
+        <marker id="a2" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#3ddc97"/></marker>
+        <marker id="a3" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ff5f7e"/></marker>
+      </defs>
+
+```
+  <!-- INIT -->
+  <rect x="260" y="10" width="180" height="64" rx="10" fill="#13182a" stroke="#7c5cfc" stroke-width="2"/>
+  <text x="350" y="35" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#a48dfd">terraform init</text>
+  <text x="350" y="54" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#8a98b8">Download providers · Setup backend</text>
+  <!-- arrow down -->
+  <line x1="350" y1="76" x2="350" y2="106" stroke="#5a6888" stroke-width="1.5" marker-end="url(#a1)"/>
+
+  <!-- WRITE CODE box (left) -->
+  <rect x="30" y="108" width="150" height="56" rx="8" fill="#0f1520" stroke="#3a4a6a" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="105" y="132" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#5a6888">Write / Edit</text>
+  <text x="105" y="150" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#5a6888">your .tf files</text>
+
+  <!-- VALIDATE -->
+  <rect x="260" y="108" width="180" height="56" rx="10" fill="#13182a" stroke="#00d4aa" stroke-width="1.5"/>
+  <text x="350" y="132" text-anchor="middle" font-family="Syne,sans-serif" font-size="12" font-weight="700" fill="#00d4aa">terraform validate</text>
+  <text x="350" y="150" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#8a98b8">Check syntax · No API calls</text>
+  <!-- arrow from write to validate -->
+  <line x1="182" y1="136" x2="258" y2="136" stroke="#3a4a6a" stroke-width="1.5" marker-end="url(#a1)"/>
+  <!-- arrow down -->
+  <line x1="350" y1="166" x2="350" y2="196" stroke="#5a6888" stroke-width="1.5" marker-end="url(#a1)"/>
+
+  <!-- PLAN -->
+  <rect x="260" y="198" width="180" height="64" rx="10" fill="#13182a" stroke="#f5a623" stroke-width="2"/>
+  <text x="350" y="222" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#f5a623">terraform plan</text>
+  <text x="350" y="242" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#8a98b8">Preview: + add · ~ change · - destroy</text>
+  <!-- decision diamond -->
+  <polygon points="350,278 400,304 350,330 300,304" fill="#13182a" stroke="#3a4a6a" stroke-width="1.5"/>
+  <text x="350" y="300" text-anchor="middle" font-family="Syne,sans-serif" font-size="9" font-weight="700" fill="#8a98b8">Looks</text>
+  <text x="350" y="315" text-anchor="middle" font-family="Syne,sans-serif" font-size="9" font-weight="700" fill="#8a98b8">good?</text>
+  <!-- arrow plan to diamond -->
+  <line x1="350" y1="264" x2="350" y2="277" stroke="#5a6888" stroke-width="1.5" marker-end="url(#a1)"/>
+  <!-- NO arrow left back to write -->
+  <line x1="300" y1="304" x2="105" y2="304" stroke="#ff5f7e" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="105" y1="304" x2="105" y2="166" stroke="#ff5f7e" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#a3)"/>
+  <text x="195" y="322" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#ff8fa3">No — fix code</text>
+  <!-- YES arrow down -->
+  <line x1="350" y1="332" x2="350" y2="352" stroke="#3ddc97" stroke-width="1.5" marker-end="url(#a2)"/>
+  <text x="368" y="345" font-family="DM Mono,monospace" font-size="9" fill="#3ddc97">Yes</text>
+
+  <!-- APPLY -->
+  <rect x="260" y="354" width="180" height="56" rx="10" fill="#13182a" stroke="#3ddc97" stroke-width="2"/>
+  <text x="350" y="378" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="#3ddc97">terraform apply</text>
+  <text x="350" y="397" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#8a98b8">Create / Modify / Destroy infra</text>
+
+  <!-- fmt side note -->
+  <rect x="490" y="108" width="140" height="56" rx="8" fill="#0f1520" stroke="#3a4a6a" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="560" y="130" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#5a6888">terraform fmt</text>
+  <text x="560" y="148" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#5a6888">Always run before commit</text>
+  <line x1="492" y1="136" x2="442" y2="136" stroke="#3a4a6a" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#a1)"/>
+</svg>
+<div class="caption">The core Terraform loop — always preview with plan before you apply</div>
+```
+
+  </div>
+
+  <div class="sec-title teal" style="margin-top:32px">Each Command Explained</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div><h4>terraform init</h4><p>Downloads the provider plugins declared in your config into a local <code style="color:#a48dfd">.terraform/</code> directory. Initialises the backend. Must be run first, and again after any provider version change. Safe to run multiple times — it's idempotent.</p></div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div><h4>terraform validate</h4><p>Checks your HCL syntax and internal consistency — catches typos, missing required arguments, and invalid references. Makes <strong>no API calls</strong>. Free to run as many times as you like. Use as a pre-commit hook.</p></div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div><h4>terraform plan</h4><p>The most important command. Compares your config against state, calls provider APIs to check real-world status, and produces a <strong>diff</strong>: <code style="color:#3ddc97">+</code> to add, <code style="color:#f5a623">~</code> to change, <code style="color:#ff5f7e">-</code> to destroy. Use <code style="color:#a48dfd">-out=tfplan</code> to save it for apply.</p></div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div><h4>terraform apply</h4><p>Executes the plan. Without <code style="color:#a48dfd">-auto-approve</code> it shows the plan again and asks for confirmation. In CI/CD, always use a saved plan file: <code style="color:#a48dfd">terraform apply tfplan</code> — this guarantees you apply exactly what you reviewed.</p></div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div><h4>terraform destroy</h4><p>Destroys <strong>all resources</strong> managed by this config. Use <code style="color:#a48dfd">-target</code> to destroy specific resources. Protected by <code style="color:#a48dfd">lifecycle { prevent_destroy = true }</code> on critical resources.</p></div>
+    </div>
+  </div>
+
+  <div class="callout teal" style="margin-top:24px"><strong>Pro tip:</strong> Always use <code>terraform plan -out=tfplan</code> then <code>terraform apply tfplan</code>. This ensures the apply executes exactly the plan you reviewed — no surprise changes if the cloud state changed between plan and apply.</div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════
+     TAB 4: SYNTAX
+═══════════════════════════════════ -->
+
+<div id="syntax" class="content">
+<div class="section">
+  <div class="sec-title">HCL — HashiCorp Configuration Language</div>
+  <p class="prose">HCL is Terraform's native language. It's designed to be <strong>human-readable and machine-parseable</strong>. Everything you write in Terraform is HCL. Learn these patterns and you can write any Terraform config.</p>
+
+  <!-- HCL Anatomy -->
+
+  <div class="infographic">
+    <svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg">
+      <!-- block structure diagram -->
+      <rect x="10" y="10" width="680" height="160" rx="12" fill="#0a1020" stroke="#243050" stroke-width="1"/>
+      <!-- code -->
+      <text x="30" y="45" font-family="DM Mono,monospace" font-size="13" fill="#a48dfd">resource</text>
+      <text x="110" y="45" font-family="DM Mono,monospace" font-size="13" fill="#5a6888"> </text>
+      <text x="118" y="45" font-family="DM Mono,monospace" font-size="13" fill="#3ddc97">"aws_instance"</text>
+      <text x="272" y="45" font-family="DM Mono,monospace" font-size="13" fill="#5a6888"> </text>
+      <text x="280" y="45" font-family="DM Mono,monospace" font-size="13" fill="#f5a623">"web_server"</text>
+      <text x="380" y="45" font-family="DM Mono,monospace" font-size="13" fill="#8a98b8"> {</text>
+      <text x="50"  y="72" font-family="DM Mono,monospace" font-size="13" fill="#00d4aa">  ami</text>
+      <text x="110" y="72" font-family="DM Mono,monospace" font-size="13" fill="#8a98b8">           = </text>
+      <text x="195" y="72" font-family="DM Mono,monospace" font-size="13" fill="#3ddc97">"ami-0abcdef1234"</text>
+      <text x="50"  y="97" font-family="DM Mono,monospace" font-size="13" fill="#00d4aa">  instance_type</text>
+      <text x="180" y="97" font-family="DM Mono,monospace" font-size="13" fill="#8a98b8"> = </text>
+      <text x="200" y="97" font-family="DM Mono,monospace" font-size="13" fill="#3ddc97">"t3.micro"</text>
+      <text x="30"  y="125" font-family="DM Mono,monospace" font-size="13" fill="#8a98b8">}</text>
+      <!-- annotations -->
+      <line x1="30" y1="28" x2="30" y2="14" stroke="#a48dfd" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="34" y="13" font-family="DM Mono,monospace" font-size="9" fill="#a48dfd">block type</text>
+      <line x1="118" y1="28" x2="118" y2="14" stroke="#3ddc97" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="122" y="13" font-family="DM Mono,monospace" font-size="9" fill="#3ddc97">resource type</text>
+      <line x1="280" y1="28" x2="280" y2="14" stroke="#f5a623" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="284" y="13" font-family="DM Mono,monospace" font-size="9" fill="#f5a623">local name</text>
+      <text x="450" y="72" font-family="DM Mono,monospace" font-size="9" fill="#8a98b8">← argument = value</text>
+      <text x="450" y="30" font-family="DM Mono,monospace" font-size="9" fill="#8a98b8">reference: aws_instance.web_server.id</text>
+    </svg>
+    <div class="caption">Anatomy of a resource block — block type, resource type, local name, arguments</div>
+  </div>
+
+  <div class="sec-title teal" style="margin-top:28px">Provider Configuration</div>
+  <div class="code-block">
+    <div class="code-hdr"><span class="code-name">provider.tf</span><span class="code-tag">HCL</span></div>
+    <div class="code-body"><span class="kw">terraform</span> {
+  <span class="key">required_version</span> = <span class="str">">= 1.6.0"</span>          <span class="cmt"># pin Terraform version</span>
+  <span class="key">required_providers</span> {
+    <span class="key">aws</span> = {
+      <span class="key">source</span>  = <span class="str">"hashicorp/aws"</span>
+      <span class="key">version</span> = <span class="str">"~> 5.0"</span>              <span class="cmt"># ~> means >= 5.0, < 6.0</span>
+    }
+  }
+}
+
+<span class="kw">provider</span> <span class="str">“aws”</span> {
+<span class="key">region</span>  = <span class="kw">var</span>.aws_region
+<span class="key">profile</span> = <span class="str">“my-aws-profile”</span>        <span class="cmt"># or use env vars / OIDC</span>
+
+<span class="key">default_tags</span> {                        <span class="cmt"># applied to ALL resources</span>
+<span class="key">tags</span> = {
+<span class="key">ManagedBy</span>   = <span class="str">“Terraform”</span>
+<span class="key">Environment</span> = <span class="kw">var</span>.environment
+<span class="key">Team</span>        = <span class="str">“platform-sre”</span>
+}
+}
+}</div>
+
+  </div>
+
+  <div class="sec-title teal" style="margin-top:28px">Variables — Inputs to your config</div>
+  <div class="code-block">
+    <div class="code-hdr"><span class="code-name">variables.tf</span><span class="code-tag">HCL</span></div>
+    <div class="code-body"><span class="cmt"># Simple string variable</span>
+<span class="kw">variable</span> <span class="str">"environment"</span> {
+  <span class="key">description</span> = <span class="str">"Deployment environment (dev/staging/prod)"</span>
+  <span class="key">type</span>        = <span class="kw">string</span>
+  <span class="key">default</span>     = <span class="str">"dev"</span>
+
+<span class="key">validation</span> {
+<span class="key">condition</span>     = <span class="fn">contains</span>([<span class="str">“dev”</span>, <span class="str">“staging”</span>, <span class="str">“prod”</span>], <span class="kw">var</span>.environment)
+<span class="key">error_message</span> = <span class="str">“Must be dev, staging, or prod.”</span>
+}
+}
+
+<span class="cmt"># Object variable — grouped config</span>
+<span class="kw">variable</span> <span class="str">“instance_config”</span> {
+<span class="key">type</span> = <span class="kw">object</span>({
+<span class="key">type</span>    = <span class="kw">string</span>
+<span class="key">count</span>   = <span class="kw">number</span>
+<span class="key">spot</span>    = <span class="kw">bool</span>
+})
+<span class="key">default</span> = {
+<span class="key">type</span>  = <span class="str">“t3.micro”</span>
+<span class="key">count</span> = <span class="num">2</span>
+<span class="key">spot</span>  = <span class="num">false</span>
+}
+}
+
+<span class="cmt"># Sensitive variable — won’t print in logs</span>
+<span class="kw">variable</span> <span class="str">“db_password”</span> {
+<span class="key">type</span>      = <span class="kw">string</span>
+<span class="key">sensitive</span> = <span class="num">true</span>
+}</div>
+
+  </div>
+
+  <div class="callout" style="margin-top:16px"><strong>Variable precedence (highest wins):</strong> -var flag → TF_VAR_ env var → terraform.tfvars → *.auto.tfvars → default value in variable block</div>
+
+  <div class="sec-title amber" style="margin-top:28px">for_each — Create multiple resources from a list/map</div>
+  <div class="code-block">
+    <div class="code-hdr"><span class="code-name">for_each patterns</span><span class="code-tag">HCL</span></div>
+    <div class="code-body"><span class="cmt"># Create 3 S3 buckets from a set</span>
+<span class="kw">resource</span> <span class="str">"aws_s3_bucket"</span> <span class="str">"envs"</span> {
+  <span class="key">for_each</span> = <span class="fn">toset</span>([<span class="str">"dev"</span>, <span class="str">"staging"</span>, <span class="str">"prod"</span>])
+  <span class="key">bucket</span>   = <span class="str">"myapp-${each.key}-data"</span>
+}
+<span class="cmt"># Access: aws_s3_bucket.envs["dev"].arn</span>
+
+<span class="cmt"># Create resources from a map (more powerful)</span>
+<span class="kw">variable</span> <span class="str">“ec2_instances”</span> {
+<span class="key">default</span> = {
+<span class="key">web</span>  = { type = <span class="str">“t3.small”</span>,  count = <span class="num">2</span> }
+<span class="key">api</span>  = { type = <span class="str">“t3.medium”</span>, count = <span class="num">3</span> }
+<span class="key">worker</span> = { type = <span class="str">“t3.large”</span>, count = <span class="num">1</span> }
+}
+}
+
+<span class="kw">resource</span> <span class="str">“aws_instance”</span> <span class="str">“fleet”</span> {
+<span class="key">for_each</span>      = <span class="kw">var</span>.ec2_instances
+<span class="key">ami</span>           = <span class="kw">data</span>.aws_ami.ubuntu.id
+<span class="key">instance_type</span> = <span class="kw">each</span>.value.type
+<span class="cmt"># each.key = “web”, “api”, “worker”</span>
+}</div>
+
+  </div>
+
+  <div class="sec-title green" style="margin-top:28px">Lifecycle — Control resource behaviour</div>
+  <div class="code-block">
+    <div class="code-hdr"><span class="code-name">lifecycle meta-argument</span><span class="code-tag">HCL</span></div>
+    <div class="code-body"><span class="kw">resource</span> <span class="str">"aws_db_instance"</span> <span class="str">"prod_db"</span> {
+  <span class="cmt"># ... other config ...</span>
+
+<span class="key">lifecycle</span> {
+<span class="cmt"># Prevent accidental deletion of the production DB</span>
+<span class="key">prevent_destroy</span> = <span class="num">true</span>
+
+```
+<span class="cmt"># Don't let Terraform change the password (managed by Secrets Manager)</span>
+<span class="key">ignore_changes</span> = [<span class="key">password</span>, <span class="key">snapshot_identifier</span>]
+
+<span class="cmt"># Create new resource BEFORE destroying old one (zero-downtime)</span>
+<span class="key">create_before_destroy</span> = <span class="num">true</span>
+```
+
+}
+}</div>
+
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════
+     TAB 5: STATE
+═══════════════════════════════════ -->
+
+<div id="state" class="content">
+<div class="section">
+  <div class="sec-title">Understanding Terraform State</div>
+  <p class="prose">State is the <strong>most misunderstood part of Terraform</strong> — and the most important. The state file is a JSON document that records every resource Terraform manages, mapping your config to real cloud resource IDs.</p>
+
+  <!-- State flow infographic -->
+
+  <div class="infographic">
+    <svg viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="sa" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#5a6888"/></marker>
+        <marker id="sa2" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#f5a623"/></marker>
+      </defs>
+
+```
+  <!-- Config -->
+  <rect x="10" y="90" width="130" height="70" rx="10" fill="#13182a" stroke="#7c5cfc" stroke-width="1.5"/>
+  <text x="75" y="116" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#a48dfd">Your Config</text>
+  <text x="75" y="134" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">Desired State</text>
+  <text x="75" y="150" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">(what you wrote)</text>
+
+  <!-- State File -->
+  <rect x="280" y="60" width="140" height="130" rx="10" fill="#13182a" stroke="#ff5f7e" stroke-width="2"/>
+  <text x="350" y="90" text-anchor="middle" font-family="Syne,sans-serif" font-size="11" font-weight="800" fill="#ff8fa3">State File</text>
+  <text x="350" y="110" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">resource map</text>
+  <text x="350" y="126" text-anchor="middle" font-family="DM Mono,monospace" font-size="8" fill="#5a6888">aws_instance.web</text>
+  <text x="350" y="141" text-anchor="middle" font-family="DM Mono,monospace" font-size="8" fill="#5a6888">  id = i-0abc123</text>
+  <text x="350" y="155" text-anchor="middle" font-family="DM Mono,monospace" font-size="8" fill="#5a6888">  ami = ami-0abc</text>
+  <text x="350" y="170" text-anchor="middle" font-family="DM Mono,monospace" font-size="8" fill="#5a6888">  ip = 10.0.1.5</text>
+
+  <!-- Real Cloud -->
+  <rect x="560" y="90" width="130" height="70" rx="10" fill="#13182a" stroke="#3ddc97" stroke-width="1.5"/>
+  <text x="625" y="116" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#3ddc97">Real Cloud</text>
+  <text x="625" y="134" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">Actual State</text>
+  <text x="625" y="150" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">(what exists)</text>
+
+  <!-- Terraform Core in middle -->
+  <rect x="285" y="208" width="130" height="32" rx="8" fill="#0a1020" stroke="#3a4a6a" stroke-width="1"/>
+  <text x="350" y="229" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#5a6888">terraform plan = diff</text>
+
+  <!-- arrows -->
+  <line x1="142" y1="125" x2="278" y2="125" stroke="#7c5cfc" stroke-width="1.5" stroke-opacity=".6" marker-end="url(#sa)"/>
+  <text x="210" y="116" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#7c5cfc">reads</text>
+
+  <line x1="558" y1="125" x2="422" y2="125" stroke="#3ddc97" stroke-width="1.5" stroke-opacity=".6" marker-end="url(#sa)"/>
+  <text x="490" y="116" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#3ddc97">refreshes from</text>
+
+  <line x1="350" y1="192" x2="350" y2="206" stroke="#f5a623" stroke-width="1.5" marker-end="url(#sa2)"/>
+
+  <!-- drift indicator -->
+  <rect x="470" y="10" width="220" height="42" rx="8" fill="#1a100f" stroke="#ff5f7e" stroke-width="1" stroke-opacity=".7"/>
+  <text x="480" y="28" font-family="Syne,sans-serif" font-size="9" font-weight="700" fill="#ff8fa3">⚠ Drift = State ≠ Reality</text>
+  <text x="480" y="44" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">Someone changed infra outside Terraform</text>
+</svg>
+<div class="caption">Terraform compares desired config against state + real cloud to calculate what needs to change</div>
+```
+
+  </div>
+
+  <div class="sec-title teal" style="margin-top:30px">Remote Backend — S3 + DynamoDB</div>
+  <p class="prose">Never store state locally on your laptop for team work. Use a <strong>remote backend with locking</strong> to prevent two people running apply simultaneously and corrupting state.</p>
+
+  <!-- S3 Backend diagram -->
+
+  <div class="infographic">
+    <svg viewBox="0 0 700 190" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="ba" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#5a6888"/></marker></defs>
+
+```
+  <!-- Engineer 1 -->
+  <rect x="10" y="65" width="100" height="60" rx="8" fill="#13182a" stroke="#3a4a6a" stroke-width="1.5"/>
+  <text x="60" y="90" text-anchor="middle" font-size="20">👩‍💻</text>
+  <text x="60" y="113" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#8a98b8">Engineer 1</text>
+
+  <!-- Engineer 2 -->
+  <rect x="590" y="65" width="100" height="60" rx="8" fill="#13182a" stroke="#3a4a6a" stroke-width="1.5"/>
+  <text x="640" y="90" text-anchor="middle" font-size="20">👨‍💻</text>
+  <text x="640" y="113" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#8a98b8">Engineer 2</text>
+
+  <!-- S3 bucket -->
+  <rect x="270" y="20" width="160" height="60" rx="10" fill="#13182a" stroke="#f5a623" stroke-width="1.5"/>
+  <text x="350" y="44" text-anchor="middle" font-family="Syne,sans-serif" font-size="11" font-weight="700" fill="#f5a623">S3 Bucket</text>
+  <text x="350" y="62" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">terraform.tfstate (encrypted)</text>
+
+  <!-- DynamoDB -->
+  <rect x="270" y="110" width="160" height="60" rx="10" fill="#13182a" stroke="#00d4aa" stroke-width="1.5"/>
+  <text x="350" y="134" text-anchor="middle" font-family="Syne,sans-serif" font-size="11" font-weight="700" fill="#00d4aa">DynamoDB</text>
+  <text x="350" y="152" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">State Lock Table 🔒</text>
+
+  <!-- arrows -->
+  <line x1="112" y1="85" x2="268" y2="50" stroke="#3a4a6a" stroke-width="1.5" marker-end="url(#ba)"/>
+  <line x1="268" y1="50" x2="112" y2="85" stroke="#3a4a6a" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="588" y1="85" x2="432" y2="50" stroke="#3a4a6a" stroke-width="1.5" marker-end="url(#ba)"/>
+  <line x1="432" y1="50" x2="588" y2="85" stroke="#3a4a6a" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="112" y1="105" x2="268" y2="140" stroke="#00d4aa" stroke-width="1.5" stroke-opacity=".6" marker-end="url(#ba)"/>
+  <line x1="588" y1="105" x2="432" y2="140" stroke="#00d4aa" stroke-width="1.5" stroke-opacity=".6" marker-end="url(#ba)"/>
+
+  <!-- lock symbol between engineers -->
+  <text x="350" y="100" text-anchor="middle" font-size="16">🔒</text>
+  <text x="350" y="96" text-anchor="middle" font-family="DM Mono,monospace" font-size="8" fill="#ff8fa3">only one apply at a time</text>
+</svg>
+<div class="caption">Both engineers share state via S3, DynamoDB prevents concurrent apply runs</div>
+```
+
+  </div>
+
+  <div class="code-block">
+    <div class="code-hdr"><span class="code-name">backend.tf</span><span class="code-tag">HCL</span></div>
+    <div class="code-body"><span class="kw">terraform</span> {
+  <span class="key">backend</span> <span class="str">"s3"</span> {
+    <span class="key">bucket</span>         = <span class="str">"mycompany-terraform-state"</span>
+    <span class="key">key</span>            = <span class="str">"prod/networking/terraform.tfstate"</span>
+    <span class="key">region</span>         = <span class="str">"ap-south-1"</span>
+    <span class="key">encrypt</span>        = <span class="num">true</span>                  <span class="cmt"># AES-256 at rest</span>
+    <span class="key">dynamodb_table</span> = <span class="str">"terraform-state-locks"</span> <span class="cmt"># for locking</span>
+    <span class="key">kms_key_id</span>     = <span class="str">"arn:aws:kms:..."</span>       <span class="cmt"># optional: CMK</span>
+  }
+}
+<span class="cmt"># After adding this, run: terraform init -reconfigure</span></div>
+  </div>
+
+  <div class="sec-title amber" style="margin-top:28px">State Commands You Must Know</div>
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Command</th><th>Purpose</th><th>When to use</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">terraform state list</td><td class="tdesc">List all resources in state</td><td class="tdesc">Audit what Terraform manages</td></tr>
+        <tr><td class="mono">terraform state show aws_instance.web</td><td class="tdesc">Show all attributes of one resource</td><td class="tdesc">Debug, find IDs, understand current state</td></tr>
+        <tr><td class="mono">terraform import aws_instance.web i-0abc123</td><td class="tdesc">Import existing cloud resource into state</td><td class="tdesc">Bring manually-created infra under TF management</td></tr>
+        <tr><td class="mono">terraform state mv old.resource new.resource</td><td class="tdesc">Rename/move resource in state</td><td class="tdesc">Refactoring — avoid destroy+recreate</td></tr>
+        <tr><td class="mono">terraform state rm aws_instance.web</td><td class="tdesc">Remove from state without destroying</td><td class="tdesc">Stop managing a resource (keep it alive)</td></tr>
+        <tr><td class="mono">terraform apply -replace=aws_instance.web</td><td class="tdesc">Force recreation of specific resource</td><td class="tdesc">Replace a corrupted/broken instance</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout coral" style="margin-top:20px"><strong>⚠ Warning:</strong> Never manually edit the tfstate file. If state gets corrupted, use <code>terraform state</code> commands or restore from your S3 bucket's versioned backup. Always enable S3 versioning on your state bucket.</div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════
+     TAB 6: MODULES
+═══════════════════════════════════ -->
+
+<div id="modules" class="content">
+<div class="section">
+  <div class="sec-title">Modules — The Reuse Pattern of Terraform</div>
+  <p class="prose">A module is just <strong>a directory containing .tf files</strong>. Every Terraform config is already a module — the "root module". Child modules let you package infrastructure as reusable components with defined inputs and outputs.</p>
+
+  <!-- Module structure infographic -->
+
+  <div class="infographic">
+    <svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="ma" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#5a6888"/></marker></defs>
+
+```
+  <!-- Root module -->
+  <rect x="10" y="10" width="200" height="240" rx="12" fill="#0f1520" stroke="#7c5cfc" stroke-width="2"/>
+  <text x="110" y="34" text-anchor="middle" font-family="Syne,sans-serif" font-size="11" font-weight="700" fill="#a48dfd">Root Module</text>
+  <text x="110" y="52" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#5a6888">/infra</text>
+  <rect x="28" y="62" width="164" height="24" rx="5" fill="#0a1020"/>
+  <text x="38" y="79" font-family="DM Mono,monospace" font-size="9" fill="#3ddc97">main.tf</text>
+  <rect x="28" y="92" width="164" height="24" rx="5" fill="#0a1020"/>
+  <text x="38" y="109" font-family="DM Mono,monospace" font-size="9" fill="#00d4aa">variables.tf</text>
+  <rect x="28" y="122" width="164" height="24" rx="5" fill="#0a1020"/>
+  <text x="38" y="139" font-family="DM Mono,monospace" font-size="9" fill="#f5a623">outputs.tf</text>
+  <rect x="28" y="152" width="164" height="24" rx="5" fill="#0a1020"/>
+  <text x="38" y="169" font-family="DM Mono,monospace" font-size="9" fill="#8a98b8">terraform.tfvars</text>
+  <text x="110" y="210" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#7c5cfc">calls modules ↓</text>
+
+  <!-- VPC module -->
+  <rect x="260" y="10" width="180" height="110" rx="12" fill="#0f1520" stroke="#00d4aa" stroke-width="1.5"/>
+  <text x="350" y="34" text-anchor="middle" font-family="Syne,sans-serif" font-size="11" font-weight="700" fill="#00d4aa">vpc module</text>
+  <text x="350" y="52" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#5a6888">/modules/vpc</text>
+  <text x="278" y="72" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">IN: cidr, azs, env</text>
+  <text x="278" y="88" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">OUT: vpc_id, subnet_ids</text>
+  <text x="278" y="104" font-family="DM Mono,monospace" font-size="8.5" fill="#3ddc97">→ creates VPC+subnets</text>
+
+  <!-- EC2 module -->
+  <rect x="260" y="135" width="180" height="110" rx="12" fill="#0f1520" stroke="#f5a623" stroke-width="1.5"/>
+  <text x="350" y="159" text-anchor="middle" font-family="Syne,sans-serif" font-size="11" font-weight="700" fill="#f5a623">ec2 module</text>
+  <text x="350" y="177" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#5a6888">/modules/ec2</text>
+  <text x="278" y="197" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">IN: vpc_id, type, ami</text>
+  <text x="278" y="213" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">OUT: instance_ids, ips</text>
+  <text x="278" y="229" font-family="DM Mono,monospace" font-size="8.5" fill="#3ddc97">→ creates EC2 fleet</text>
+
+  <!-- Registry module -->
+  <rect x="490" y="72" width="200" height="116" rx="12" fill="#0f1520" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="590" y="96" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#a78bfa">Registry Module</text>
+  <text x="590" y="114" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#5a6888">terraform-aws-modules/</text>
+  <text x="590" y="130" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#5a6888">vpc/aws</text>
+  <text x="590" y="152" text-anchor="middle" font-family="DM Mono,monospace" font-size="8" fill="#8a98b8">Community-maintained</text>
+  <text x="590" y="168" text-anchor="middle" font-family="DM Mono,monospace" font-size="8" fill="#8a98b8">versioned &amp; tested</text>
+
+  <!-- arrows -->
+  <line x1="212" y1="95" x2="258" y2="65" stroke="#7c5cfc" stroke-width="1.5" stroke-opacity=".7" marker-end="url(#ma)"/>
+  <line x1="212" y1="150" x2="258" y2="190" stroke="#7c5cfc" stroke-width="1.5" stroke-opacity=".7" marker-end="url(#ma)"/>
+  <line x1="442" y1="65" x2="488" y2="100" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#ma)"/>
+  <text x="452" y="52" font-family="DM Mono,monospace" font-size="8.5" fill="#a78bfa">or use from registry</text>
+</svg>
+<div class="caption">Root module orchestrates child modules — each module has defined inputs (variables) and outputs</div>
+```
+
+  </div>
+
+  <div class="sec-title teal" style="margin-top:28px">Writing Your First Module</div>
+
+  <div class="code-block">
+    <div class="code-hdr"><span class="code-name">modules/vpc/main.tf</span><span class="code-tag">HCL</span></div>
+    <div class="code-body"><span class="cmt"># modules/vpc/main.tf — the module definition</span>
+
+<span class="kw">resource</span> <span class="str">“aws_vpc”</span> <span class="str">“this”</span> {
+<span class="key">cidr_block</span>           = <span class="kw">var</span>.cidr
+<span class="key">enable_dns_hostnames</span> = <span class="num">true</span>
+<span class="key">tags</span> = { <span class="key">Name</span> = <span class="str">”${var.name}-vpc”</span> }
+}
+
+<span class="kw">resource</span> <span class="str">“aws_subnet”</span> <span class="str">“public”</span> {
+<span class="key">for_each</span>          = <span class="fn">toset</span>(<span class="kw">var</span>.public_subnets)
+<span class="key">vpc_id</span>            = <span class="kw">aws_vpc</span>.this.id
+<span class="key">cidr_block</span>        = <span class="kw">each</span>.value
+<span class="key">availability_zone</span> = <span class="fn">element</span>(<span class="kw">var</span>.azs, <span class="fn">index</span>(<span class="kw">var</span>.public_subnets, <span class="kw">each</span>.value))
+}</div>
+
+  </div>
+
+  <div class="code-block" style="margin-top:12px">
+    <div class="code-hdr"><span class="code-name">modules/vpc/variables.tf + outputs.tf</span><span class="code-tag">HCL</span></div>
+    <div class="code-body"><span class="cmt"># variables.tf — module inputs</span>
+<span class="kw">variable</span> <span class="str">"name"</span>           { <span class="key">type</span> = <span class="kw">string</span> }
+<span class="kw">variable</span> <span class="str">"cidr"</span>           { <span class="key">type</span> = <span class="kw">string</span> }
+<span class="kw">variable</span> <span class="str">"azs"</span>            { <span class="key">type</span> = <span class="kw">list(string)</span> }
+<span class="kw">variable</span> <span class="str">"public_subnets"</span>  { <span class="key">type</span> = <span class="kw">list(string)</span> }
+
+<span class="cmt"># outputs.tf — what callers can use</span>
+<span class="kw">output</span> <span class="str">“vpc_id”</span>     { <span class="key">value</span> = <span class="kw">aws_vpc</span>.this.id }
+<span class="kw">output</span> <span class="str">“subnet_ids”</span> { <span class="key">value</span> = [<span class="kw">for</span> s <span class="kw">in</span> <span class="kw">aws_subnet</span>.public : s.id] }</div>
+
+  </div>
+
+  <div class="code-block" style="margin-top:12px">
+    <div class="code-hdr"><span class="code-name">main.tf — calling the module</span><span class="code-tag">HCL</span></div>
+    <div class="code-body"><span class="cmt"># Call the same module 3 times with different inputs</span>
+<span class="kw">module</span> <span class="str">"vpc_dev"</span> {
+  <span class="key">source</span> = <span class="str">"./modules/vpc"</span>
+  <span class="key">name</span>           = <span class="str">"dev"</span>
+  <span class="key">cidr</span>           = <span class="str">"10.0.0.0/16"</span>
+  <span class="key">azs</span>            = [<span class="str">"ap-south-1a"</span>, <span class="str">"ap-south-1b"</span>]
+  <span class="key">public_subnets</span> = [<span class="str">"10.0.1.0/24"</span>, <span class="str">"10.0.2.0/24"</span>]
+}
+
+<span class="kw">module</span> <span class="str">“vpc_prod”</span> {
+<span class="key">source</span> = <span class="str">”./modules/vpc”</span>
+<span class="key">name</span>           = <span class="str">“prod”</span>
+<span class="key">cidr</span>           = <span class="str">“10.1.0.0/16”</span>
+<span class="key">azs</span>            = [<span class="str">“ap-south-1a”</span>, <span class="str">“ap-south-1b”</span>]
+<span class="key">public_subnets</span> = [<span class="str">“10.1.1.0/24”</span>, <span class="str">“10.1.2.0/24”</span>]
+}
+
+<span class="cmt"># Use outputs from the module</span>
+<span class="kw">output</span> <span class="str">“prod_vpc_id”</span> {
+<span class="key">value</span> = <span class="kw">module</span>.vpc_prod.vpc_id
+}</div>
+
+  </div>
+
+  <div class="callout green" style="margin-top:16px"><strong>Top tip:</strong> Before writing your own module, check <code>registry.terraform.io</code>. The <code>terraform-aws-modules/vpc/aws</code> module is battle-tested by thousands of companies and handles edge cases you'd miss. Use community modules for standard infra, write custom ones for your organisation-specific patterns.</div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════
+     TAB 7: CI/CD
+═══════════════════════════════════ -->
+
+<div id="cicd" class="content">
+<div class="section">
+  <div class="sec-title">Terraform in CI/CD Pipelines</div>
+  <p class="prose">Running Terraform manually from laptops doesn't scale. In a team, <strong>every infrastructure change should go through a pull request</strong>, be reviewed, and be applied automatically by a CI/CD system — with a human approval gate for production.</p>
+
+  <!-- CI/CD Flow -->
+
+  <div class="infographic">
+    <svg viewBox="0 0 700 340" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="ca" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#5a6888"/></marker></defs>
+
+```
+  <!-- step boxes -->
+  <!-- 1: Push -->
+  <rect x="10" y="10" width="130" height="56" rx="8" fill="#13182a" stroke="#7c5cfc" stroke-width="1.5"/>
+  <text x="75" y="33" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#a48dfd">1. git push</text>
+  <text x="75" y="52" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">Open Pull Request</text>
+
+  <!-- arrow -->
+  <line x1="142" y1="38" x2="168" y2="38" stroke="#5a6888" stroke-width="1.5" marker-end="url(#ca)"/>
+
+  <!-- 2: fmt + validate -->
+  <rect x="170" y="10" width="140" height="56" rx="8" fill="#13182a" stroke="#00d4aa" stroke-width="1.5"/>
+  <text x="240" y="30" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#00d4aa">2. Checks</text>
+  <text x="240" y="46" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">fmt · validate · tflint</text>
+  <text x="240" y="60" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">tfsec · checkov</text>
+
+  <!-- arrow -->
+  <line x1="312" y1="38" x2="338" y2="38" stroke="#5a6888" stroke-width="1.5" marker-end="url(#ca)"/>
+
+  <!-- 3: plan -->
+  <rect x="340" y="10" width="130" height="56" rx="8" fill="#13182a" stroke="#f5a623" stroke-width="2"/>
+  <text x="405" y="30" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#f5a623">3. terraform plan</text>
+  <text x="405" y="47" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">-out=tfplan</text>
+  <text x="405" y="61" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">Post diff to PR 💬</text>
+
+  <!-- arrow -->
+  <line x1="472" y1="38" x2="498" y2="38" stroke="#5a6888" stroke-width="1.5" marker-end="url(#ca)"/>
+
+  <!-- 4: review -->
+  <rect x="500" y="10" width="130" height="56" rx="8" fill="#13182a" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="565" y="30" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#a78bfa">4. PR Review</text>
+  <text x="565" y="47" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">Team reviews plan</text>
+  <text x="565" y="61" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">Approve &amp; Merge ✓</text>
+
+  <!-- arrow down from 4 -->
+  <line x1="565" y1="68" x2="565" y2="98" stroke="#5a6888" stroke-width="1.5" marker-end="url(#ca)"/>
+
+  <!-- 5: apply (prod gate) -->
+  <rect x="430" y="100" width="270" height="64" rx="8" fill="#13182a" stroke="#3ddc97" stroke-width="2"/>
+  <text x="565" y="122" text-anchor="middle" font-family="Syne,sans-serif" font-size="11" font-weight="800" fill="#3ddc97">5. terraform apply</text>
+  <text x="565" y="140" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">On merge to main</text>
+  <text x="565" y="156" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#8a98b8">Uses saved tfplan file ✓</text>
+
+  <!-- arrow down from apply -->
+  <line x1="565" y1="166" x2="565" y2="196" stroke="#5a6888" stroke-width="1.5" marker-end="url(#ca)"/>
+
+  <!-- 6: notify -->
+  <rect x="430" y="198" width="270" height="52" rx="8" fill="#13182a" stroke="#3a4a6a" stroke-width="1.5"/>
+  <text x="565" y="218" text-anchor="middle" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="#8a98b8">6. Notify</text>
+  <text x="565" y="238" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#5a6888">Slack · Email · PagerDuty</text>
+
+  <!-- OIDC box -->
+  <rect x="10" y="100" width="380" height="150" rx="12" fill="#0a1020" stroke="#4db8ff" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="200" y="122" text-anchor="middle" font-family="Syne,sans-serif" font-size="11" font-weight="700" fill="#4db8ff">OIDC Auth — No Long-Lived Keys</text>
+  <text x="30" y="148" font-family="DM Mono,monospace" font-size="9.5" fill="#8a98b8">GitHub Actions → requests JWT</text>
+  <text x="30" y="166" font-family="DM Mono,monospace" font-size="9.5" fill="#8a98b8">AWS STS → validates JWT → temp creds</text>
+  <text x="30" y="184" font-family="DM Mono,monospace" font-size="9.5" fill="#8a98b8">No AWS_ACCESS_KEY anywhere 🔒</text>
+  <text x="200" y="210" text-anchor="middle" font-size="24">🔑 → 🪄 → ☁️</text>
+  <text x="200" y="234" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#4db8ff">JWT       STS           AWS</text>
+</svg>
+<div class="caption">Full CI/CD pipeline — plan on PR, apply on merge, OIDC auth means zero stored AWS credentials</div>
+```
+
+  </div>
+
+  <div class="sec-title teal" style="margin-top:28px">GitHub Actions Workflow</div>
+  <div class="code-block">
+    <div class="code-hdr"><span class="code-name">.github/workflows/terraform.yml</span><span class="code-tag">YAML</span></div>
+    <div class="code-body"><span class="key">name</span>: <span class="str">Terraform CI/CD</span>
+
+<span class="key">on</span>:
+<span class="key">pull_request</span>:
+<span class="key">paths</span>: [<span class="str">‘infra/**’</span>]       <span class="cmt"># only run when .tf files change</span>
+<span class="key">push</span>:
+<span class="key">branches</span>: [<span class="str">main</span>]
+
+<span class="key">permissions</span>:
+<span class="key">id-token</span>: <span class="str">write</span>             <span class="cmt"># required for OIDC</span>
+<span class="key">contents</span>: <span class="str">read</span>
+<span class="key">pull-requests</span>: <span class="str">write</span>       <span class="cmt"># to post plan comment on PR</span>
+
+<span class="key">jobs</span>:
+<span class="key">terraform</span>:
+<span class="key">runs-on</span>: <span class="str">ubuntu-latest</span>
+<span class="key">steps</span>:
+- <span class="key">uses</span>: <span class="str">actions/checkout@v4</span>
+
+```
+  - <span class="key">name</span>: <span class="str">Configure AWS via OIDC</span>     <span class="cmt"># no stored keys!</span>
+    <span class="key">uses</span>: <span class="str">aws-actions/configure-aws-credentials@v4</span>
+    <span class="key">with</span>:
+      <span class="key">role-to-assume</span>: <span class="str">arn:aws:iam::123456:role/GitHubActionsRole</span>
+      <span class="key">aws-region</span>: <span class="str">ap-south-1</span>
+
+  - <span class="key">uses</span>: <span class="str">hashicorp/setup-terraform@v3</span>
+    <span class="key">with</span>: { <span class="key">terraform_version</span>: <span class="str">'1.7.0'</span> }
+
+  - <span class="key">run</span>: <span class="str">terraform init</span>
+
+  - <span class="key">name</span>: <span class="str">Terraform Plan</span>
+    <span class="key">id</span>: <span class="str">plan</span>
+    <span class="key">run</span>: <span class="str">terraform plan -out=tfplan -no-color 2>&1 | tee plan.txt</span>
+
+  - <span class="key">name</span>: <span class="str">Post Plan to PR</span>             <span class="cmt"># only on PRs</span>
+    <span class="key">if</span>: <span class="str">github.event_name == 'pull_request'</span>
+    <span class="key">uses</span>: <span class="str">actions/github-script@v7</span>
+    <span class="key">with</span>:
+      <span class="key">script</span>: |
+        <span class="fn">github.rest.issues.createComment</span>({
+          ...context.repo,
+          issue_number: context.issue.number,
+          body: <span class="str">'```\n'</span> + require(<span class="str">'fs'</span>).readFileSync(<span class="str">'plan.txt'</span>, <span class="str">'utf8'</span>) + <span class="str">'```'</span>
+        })
+
+  - <span class="key">name</span>: <span class="str">Terraform Apply</span>           <span class="cmt"># only on merge to main</span>
+    <span class="key">if</span>: <span class="str">github.ref == 'refs/heads/main'</span>
+    <span class="key">run</span>: <span class="str">terraform apply -auto-approve tfplan</span></div>
+```
+
+  </div>
+
+  <div class="callout amber" style="margin-top:16px"><strong>BFSI context:</strong> In regulated environments (DORA, SOX), you need an audit trail of every infrastructure change. This pipeline provides it automatically — every plan and apply is logged in GitHub Actions, linked to a PR, and associated with a named reviewer. That's your change evidence for auditors.</div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════
+     TAB 8: PROJECTS
+═══════════════════════════════════ -->
+
+<div id="projects" class="content">
+<div class="section">
+  <div class="sec-title">Hands-on Projects — Learn by Building</div>
+  <p class="prose">The fastest way to master Terraform is to <strong>build real infrastructure</strong>. These 8 projects are ordered by difficulty — complete them in sequence and you'll have a portfolio that demonstrates production-grade Terraform skills.</p>
+  <div class="proj-grid">
+    <div class="proj pb"><div class="plv lb">Beginner · Week 2</div><h3>🗄️ S3 Static Website</h3><p>Deploy a static website using S3 + CloudFront CDN. Configure bucket policy, CORS, website hosting. Output the CloudFront URL. Practice: resources, outputs, data sources.</p><div class="tags"><span class="tag">aws_s3_bucket</span><span class="tag">aws_cloudfront</span><span class="tag">outputs</span></div></div>
+    <div class="proj pb"><div class="plv lb">Beginner · Week 3</div><h3>🔐 IAM Roles Module</h3><p>Build a reusable module for IAM roles + policies. Accept role name, trust policy, and managed policy ARNs as inputs. Return role ARN. Practice: modules, variables, for_each.</p><div class="tags"><span class="tag">aws_iam_role</span><span class="tag">for_each</span><span class="tag">modules</span></div></div>
+    <div class="proj pi"><div class="plv li">Intermediate · Week 5</div><h3>🌐 3-Tier VPC Module</h3><p>Production VPC with public/private/database subnets across 2 AZs. NAT gateway, route tables, security groups. Call it 3 times for dev/staging/prod. Practice: module composition, count.</p><div class="tags"><span class="tag">aws_vpc</span><span class="tag">aws_subnet</span><span class="tag">NAT gateway</span><span class="tag">module</span></div></div>
+    <div class="proj pi"><div class="plv li">Intermediate · Week 6</div><h3>⚖️ ALB + Auto Scaling Group</h3><p>Deploy an ALB with target group health checks, ASG with launch template, CloudWatch scaling policies on CPU. Practice: data sources, lifecycle, depends_on.</p><div class="tags"><span class="tag">aws_alb</span><span class="tag">aws_asg</span><span class="tag">aws_cloudwatch</span></div></div>
+    <div class="proj pi"><div class="plv li">Intermediate · Week 8</div><h3>🗃️ RDS + Secrets Manager</h3><p>RDS PostgreSQL in private subnets with automated credential rotation via Secrets Manager. Sensitive outputs. Practice: sensitive variables, depends_on, data sources.</p><div class="tags"><span class="tag">aws_db_instance</span><span class="tag">aws_secretsmanager</span><span class="tag">sensitive</span></div></div>
+    <div class="proj pa"><div class="plv la">Advanced · Week 9</div><h3>📦 Migrate State to S3</h3><p>Take an existing local-state project and migrate it to S3 + DynamoDB locking. Demonstrate state locking by running two applies simultaneously. Practice: backends, state commands.</p><div class="tags"><span class="tag">S3 backend</span><span class="tag">DynamoDB lock</span><span class="tag">state migration</span></div></div>
+    <div class="proj pa"><div class="plv la">Advanced · Week 11</div><h3>🚀 Full CI/CD Pipeline</h3><p>GitHub Actions: PR triggers plan posted as comment, merge triggers apply. OIDC auth to AWS — zero stored credentials. Slack notification. tflint + tfsec in pipeline. </p><div class="tags"><span class="tag">GitHub Actions</span><span class="tag">OIDC</span><span class="tag">atlantis</span><span class="tag">tfsec</span></div></div>
+    <div class="proj pa"><div class="plv la">Advanced · Week 12</div><h3>🔍 Drift Detection Lambda</h3><p>Scheduled Lambda runs terraform plan daily. If drift detected (plan output contains changes), posts to Slack with diff. State stored in S3. Built entirely in Terraform.</p><div class="tags"><span class="tag">aws_lambda</span><span class="tag">aws_eventbridge</span><span class="tag">drift detection</span></div></div>
+  </div>
+
+  <div class="sec-title teal" style="margin-top:36px">Best Practices Quick Reference</div>
+  <div class="bp-list">
+    <div class="bp bp-do"><div class="bp-badge bdo">✓ Do</div><h4>Always use remote backend with state locking</h4><p>Never store state locally in a team environment. S3 + DynamoDB is the standard for AWS. Enable versioning on the S3 bucket so you can restore state if it gets corrupted.</p></div>
+    <div class="bp bp-dn"><div class="bp-badge bdn">✗ Don't</div><h4>Never hardcode credentials in .tf files</h4><p>Hardcoding AWS keys in .tf files is a critical security risk that will get caught in audits. Use OIDC for CI/CD, IAM roles for EC2/Lambda, and AWS profiles for local development.</p></div>
+    <div class="bp bp-do"><div class="bp-badge bdo">✓ Do</div><h4>Pin provider and module versions</h4><p>Always specify version constraints (<code style="color:#3ddc97">~> 5.0</code> for providers). Unpinned versions auto-upgrade on <code style="color:#a48dfd">terraform init -upgrade</code> and can silently break your infrastructure.</p></div>
+    <div class="bp bp-tip"><div class="bp-badge btp">💡 Tip</div><h4>Standard file structure: one file per concern</h4><p><code style="color:#a48dfd">main.tf</code> resources · <code style="color:#a48dfd">variables.tf</code> inputs · <code style="color:#a48dfd">outputs.tf</code> exports · <code style="color:#a48dfd">provider.tf</code> provider · <code style="color:#a48dfd">backend.tf</code> state. Every Terraform engineer knows this layout.</p></div>
+    <div class="bp bp-do"><div class="bp-badge bdo">✓ Do</div><h4>Use lifecycle blocks to protect critical resources</h4><p>Add <code style="color:#3ddc97">prevent_destroy = true</code> to databases, S3 buckets with data, and KMS keys. Add <code style="color:#3ddc97">ignore_changes</code> for attributes managed outside Terraform.</p></div>
+    <div class="bp bp-tip"><div class="bp-badge btp">💡 Tip</div><h4>Run fmt + validate as pre-commit hooks</h4><p>Install the <code style="color:#a48dfd">pre-commit</code> framework with terraform hooks. Catches formatting, syntax, and common mistakes before they hit your repo — saving CI minutes and code review time.</p></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ BOTTOM NAV ═══ -->
+
+<nav class="bottom-nav" id="bnav">
+  <div class="bni active" onclick="show('roadmap',null,'🗺 Roadmap')" data-p="roadmap"><div class="bni-ic">🗺</div><div class="bni-lb">Roadmap</div></div>
+  <div class="bni" onclick="show('concepts',null,'🧠 Concepts')" data-p="concepts"><div class="bni-ic">🧠</div><div class="bni-lb">Concepts</div></div>
+  <div class="bni" onclick="show('workflow',null,'⚙️ Workflow')" data-p="workflow"><div class="bni-ic">⚙️</div><div class="bni-lb">Workflow</div></div>
+  <div class="bni" onclick="show('syntax',null,'📝 Syntax')" data-p="syntax"><div class="bni-ic">📝</div><div class="bni-lb">Syntax</div></div>
+  <div class="bni" onclick="show('state',null,'💾 State')" data-p="state"><div class="bni-ic">💾</div><div class="bni-lb">State</div></div>
+  <div class="bni" onclick="show('modules',null,'🧩 Modules')" data-p="modules"><div class="bni-ic">🧩</div><div class="bni-lb">Modules</div></div>
+  <div class="bni" onclick="show('cicd',null,'🚀 CI/CD')" data-p="cicd"><div class="bni-ic">🚀</div><div class="bni-lb">CI/CD</div></div>
+  <div class="bni" onclick="show('projects',null,'🛠 Projects')" data-p="projects"><div class="bni-ic">🛠</div><div class="bni-lb">Projects</div></div>
+</nav>
+
+<script>
+function show(id, el, label) {
+  var ps = document.querySelectorAll('.content');
+  for (var i = 0; i < ps.length; i++) ps[i].classList.remove('active');
+  document.getElementById(id).classList.add('active');
+
+  var ts = document.querySelectorAll('.tab');
+  for (var i = 0; i < ts.length; i++) ts[i].classList.remove('active');
+  for (var i = 0; i < ts.length; i++) {
+    if ((ts[i].getAttribute('onclick') || '').indexOf("'" + id + "'") !== -1) {
+      ts[i].classList.add('active'); break;
+    }
+  }
+  if (el) el.classList.add('active');
+
+  var ns = document.querySelectorAll('.bni');
+  for (var i = 0; i < ns.length; i++) ns[i].classList.remove('active');
+  var mn = document.querySelector('.bni[data-p="' + id + '"]');
+  if (mn) mn.classList.add('active');
+
+  var lbl = document.getElementById('lbl');
+  if (lbl && label) lbl.textContent = label;
+
+  var hero = document.querySelector('.hero');
+  if (hero) window.scrollTo({ top: hero.offsetHeight, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
